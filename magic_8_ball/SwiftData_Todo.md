@@ -72,15 +72,15 @@
 #### ✅ 任務 1.2: AnswerRecord 模型建立
 **優先級**: 🔴 必須
 
-- [ ] 建立新檔案 `Models/AnswerRecord.swift`
-- [ ] 實作以下欄位：
-  - [ ] `id: UUID` - 主鍵
-  - [ ] `question: String` - 用戶問題
-  - [ ] `answer: String` - 占卜答案
-  - [ ] `answerType: AnswerType` - 答案類型（肯定/否定/中性）
-  - [ ] `timestamp: Date` - 記錄時間
-  - [ ] `@Relationship var user: User` - 關聯用戶（非可選）
-- [ ] 實作初始化方法：
+- [x] 建立新檔案 `Models/AnswerRecord.swift`
+- [x] 實作以下欄位：
+  - [x] `id: UUID` - 主鍵
+  - [x] `question: String` - 用戶問題
+  - [x] `answer: String` - 占卜答案
+  - [x] `answerType: AnswerType` - 答案類型（肯定/否定/中性）
+  - [x] `timestamp: Date` - 記錄時間
+  - [x] `@Relationship var user: User` - 關聯用戶（非可選）
+- [x] 實作初始化方法：
   ```swift
   init(question: String, answer: String, answerType: AnswerType, user: User) {
       self.id = UUID()
@@ -91,7 +91,14 @@
       self.user = user
   }
   ```
-- [ ] 驗證：編譯無錯誤
+- [x] 驗證：編譯無錯誤
+
+**完成狀態**: ✅ 已完成
+- 建立 Models 目錄
+- 建立 AnswerRecord.swift 檔案
+- 實作所有必要欄位（id, question, answer, answerType, timestamp）
+- 實作 @Relationship 關聯到 User（非可選）
+- 實作完整初始化方法
 
 ---
 
