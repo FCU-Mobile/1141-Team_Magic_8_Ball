@@ -6,22 +6,18 @@ import SwiftData
 final class User {
     @Attribute(.unique) var id: UUID
     var name: String
-    var birthday: Date
-    var gender: Gender
+    var birthday: Date?
+    var gender: String?
+    var createdAt: Date
+    
+    @Relationship(deleteRule: .cascade, inverse: \AnswerRecord.user)
+    var records: [AnswerRecord] = []
 
-    init(name: String, birthday: Date, gender: Gender) {
+    init(name: String, birthday: Date? = nil, gender: String? = nil) {
         self.id = UUID()
         self.name = name
         self.birthday = birthday
         self.gender = gender
-    }
-
-    /// 性別列舉
-    enum Gender: String, Codable, CaseIterable, Identifiable {
-        case male = "男"
-        case female = "女"
-        case other = "其他"
-
-        var id: String { rawValue }
+        self.createdAt = Date()
     }
 }
