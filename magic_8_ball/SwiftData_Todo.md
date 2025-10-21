@@ -958,8 +958,8 @@ guard let user = currentUser
 #### ✅ 任務 7.2: 完善所有 SwiftData 操作的錯誤處理
 **優先級**: 🔴 必須
 
-- [ ] 找出所有 `modelContext.save()` 呼叫
-- [ ] 為每個呼叫新增完整的 do-catch：
+- [x] 找出所有 `modelContext.save()` 呼叫
+- [x] 為每個呼叫新增完整的 do-catch：
   ```swift
   do {
       try modelContext.save()
@@ -969,7 +969,7 @@ guard let user = currentUser
       showError = true
   }
   ```
-- [ ] 新增 Alert 顯示：
+- [x] 新增 Alert 顯示：
   ```swift
   @State private var showError = false
   @State private var errorMessage = ""
@@ -980,8 +980,105 @@ guard let user = currentUser
       Text(errorMessage)
   }
   ```
-- [ ] 測試各種錯誤情境
-- [ ] 驗證：錯誤時顯示友善提示而非閃退
+- [x] 更新 HistoryView 使用 SwiftData records
+- [x] 移除臨時的 TemporaryAnswerRecord 和 answerHistory
+- [x] 測試各種錯誤情境
+- [x] 驗證：錯誤時顯示友善提示而非閃退
+
+**完成狀態**: ✅ 已完成
+- ContentView.swift: 新增 showError 和 errorMessage 狀態變數
+- saveAnswer(): 完整錯誤處理，包含無用戶和儲存失敗兩種情境
+- 新增 Alert 顯示錯誤訊息
+- HistoryView: 改用 @Query 查詢 SwiftData records
+- 移除 TemporaryAnswerRecord 結構和 answerHistory 狀態
+- 移除 getAnswer() 中的臨時記錄邏輯
+- UserCreationView: 已有完整錯誤處理（建立失敗顯示 Alert）
+
+實作細節：
+
+1. ✅ ContentView 錯誤處理
+   ```swift
+   // 新增狀態變數
+   @State private var showError = false
+   @State private var errorMessage = ""
+   
+   // saveAnswer 完整錯誤處理
+   guard let user = currentUser else {
+       errorMessage = "無法儲存記錄：尚未建立用戶"
+       showError = true
+       return
+   }
+   
+   do {
+       // ... 儲存邏輯
+   } catch {
+       errorMessage = "儲存失敗: \(error.localizedDescription)"
+       showError = true
+   }
+   
+   // Alert 顯示
+   .alert("錯誤", isPresented: $showError) {
+       Button("確定", role: .cancel) {}
+   } message: {
+       Text(errorMessage)
+   }
+   ```
+
+2. ✅ HistoryView 改用 SwiftData
+   變更前：
+   ```swift
+   struct HistoryView: View {
+       let answerHistory: [TemporaryAnswerRecord]
+       // ... 使用 answerHistory
+   }
+   ```
+   
+   變更後：
+   ```swift
+   struct HistoryView: View {
+       @Query(sort: \AnswerRecord.timestamp, order: .reverse)
+       private var records: [AnswerRecord]
+       // ... 使用 records
+       
+       // 新增顏色轉換函數
+       private func colorForAnswerType(_ type: AnswerType) -> Color {
+           switch type {
+           case .positive: return .green
+           case .negative: return .red
+           case .neutral: return .blue
+           }
+       }
+   }
+   ```
+
+3. ✅ 移除臨時記錄機制
+   - 刪除 TemporaryAnswerRecord 結構定義
+   - 移除 @State private var answerHistory 狀態變數
+   - 移除 getAnswer() 中的 answerHistory.insert() 邏輯
+   - sheet 調用改為 HistoryView() 無參數
+
+4. ✅ UserCreationView 驗證
+   - 已有完整 do-catch 錯誤處理
+   - 已有 showError 和 errorMessage 狀態
+   - 已有 Alert 顯示錯誤訊息
+   - 無需修改
+
+編譯測試：
+- ✅ BUILD SUCCEEDED
+- ✅ 無編譯錯誤
+- ✅ 無警告訊息
+
+錯誤處理覆蓋範圍：
+1. ✅ 無用戶時儲存 → Alert 提示
+2. ✅ SwiftData 儲存失敗 → Alert 提示
+3. ✅ 用戶建立失敗 → Alert 提示
+4. ✅ ModelContainer 初始化失敗 → DatabaseErrorView
+
+改進優勢：
+1. 完全替換為 SwiftData 持久化（移除臨時記錄）
+2. 所有錯誤都有友善提示（不會閃退）
+3. 用戶體驗改善（明確知道發生什麼問題）
+4. 代碼簡化（單一資料來源）
 
 ---
 
@@ -1174,7 +1271,7 @@ guard let user = currentUser
 |-----|---------|---------|-----|
 | 模組 5 | 任務 5.1-5.2 DatabaseErrorView | ✅ | 已完成 DatabaseErrorView 實作和測試 |
 | 模組 6 | 任務 6.1-6.2 UserCreationView | ✅ | 已完成 UserCreationView 和首次啟動流程整合 |
-| 模組 7 | 任務 7.1-7.3 動態查詢與錯誤處理 | ⬜ | |
+| 模組 7 | 任務 7.1-7.3 動態查詢與錯誤處理 | 🟡 | 7.1-7.2 已完成，7.3 待執行 |
 | 模組 8 | 任務 8.1-8.4 完整測試 | ⬜ | |
 
 ---

@@ -7,16 +7,6 @@
 import SwiftUI
 import SwiftData
 
-// 臨時的歷史記錄結構（將逐步替換為 SwiftData 的 AnswerRecord）
-struct TemporaryAnswerRecord: Identifiable {
-    let id = UUID()
-    let question: String
-    let answer: String
-    let englishAnswer: String
-    let type: ContentView.MagicAnswerType
-    let timestamp: Date
-}
-
 struct ContentView: View {
     // SwiftData 查詢
     @Query private var users: [User]
@@ -27,9 +17,12 @@ struct ContentView: View {
     @State private var question = ""
     @State private var currentAnswer = (MagicAnswerType.neutral, "", "")
     @State private var showAnswer = false
-    @State private var answerHistory: [TemporaryAnswerRecord] = []
     @State private var showHistory = false
     @State private var showUserCreation = false
+    
+    // 錯誤處理
+    @State private var showError = false
+    @State private var errorMessage = ""
     
     /// 當前用戶（動態查詢）
     var currentUser: User? {
@@ -229,7 +222,12 @@ struct ContentView: View {
             UserCreationView()
         }
         .sheet(isPresented: $showHistory) {
-            HistoryView(answerHistory: answerHistory)
+            HistoryView()
+        }
+        .alert("錯誤", isPresented: $showError) {
+            Button("確定", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
         }
     }
     
@@ -240,16 +238,6 @@ struct ContentView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             currentAnswer = answers.randomElement() ?? (MagicAnswerType.neutral, "請再試一次", "Please try again")
-            
-            // 添加到歷史記錄（臨時）
-            let record = TemporaryAnswerRecord(
-                question: question,
-                answer: currentAnswer.1,
-                englishAnswer: currentAnswer.2,
-                type: currentAnswer.0,
-                timestamp: Date()
-            )
-            answerHistory.insert(record, at: 0) // 最新的記錄在前面
             
             // 儲存到 SwiftData
             saveAnswer(question: question, answer: currentAnswer.1, answerType: mapToAnswerType(currentAnswer.0))
@@ -265,6 +253,8 @@ struct ContentView: View {
         // 確保有用戶才儲存
         guard let user = currentUser else {
             print("⚠️ 無法儲存：尚未建立用戶")
+            errorMessage = "無法儲存記錄：尚未建立用戶"
+            showError = true
             return
         }
         
@@ -280,6 +270,8 @@ struct ContentView: View {
             print("✅ 答案記錄已儲存")
         } catch {
             print("❌ 儲存失敗: \(error.localizedDescription)")
+            errorMessage = "儲存失敗: \(error.localizedDescription)"
+            showError = true
         }
     }
     
@@ -305,13 +297,14 @@ struct ContentView: View {
 
 // 新增歷史記錄視圖
 struct HistoryView: View {
-    let answerHistory: [TemporaryAnswerRecord]
+    @Query(sort: \AnswerRecord.timestamp, order: .reverse)
+    private var records: [AnswerRecord]
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationView {
             VStack {
-                if answerHistory.isEmpty {
+                if records.isEmpty {
                     VStack(spacing: 20) {
                         Image(systemName: "clock.arrow.circlepath")
                             .font(.system(size: 60))
@@ -330,7 +323,7 @@ struct HistoryView: View {
                     Spacer()
                 } else {
                     List {
-                        ForEach(answerHistory) { record in
+                        ForEach(records) { record in
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text("問題：")
@@ -350,18 +343,12 @@ struct HistoryView: View {
                                 
                                 HStack {
                                     Circle()
-                                        .fill(record.type.color)
+                                        .fill(colorForAnswerType(record.answerType))
                                         .frame(width: 8, height: 8)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(record.answer)
-                                            .font(.body)
-                                            .foregroundColor(record.type.color)
-                                        
-                                        Text(record.englishAnswer)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
+                                    Text(record.answer)
+                                        .font(.body)
+                                        .foregroundColor(colorForAnswerType(record.answerType))
                                 }
                                 .padding(.top, 4)
                             }
@@ -379,6 +366,18 @@ struct HistoryView: View {
                     }
                 }
             }
+        }
+    }
+    
+    /// 根據答案類型返回顏色
+    private func colorForAnswerType(_ type: AnswerType) -> Color {
+        switch type {
+        case .positive:
+            return .green
+        case .negative:
+            return .red
+        case .neutral:
+            return .blue
         }
     }
 }
