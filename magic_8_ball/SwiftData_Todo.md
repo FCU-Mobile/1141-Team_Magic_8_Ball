@@ -1085,13 +1085,99 @@ guard let user = currentUser
 #### ✅ 任務 7.3: 設定 iOS 17.0 Deployment Target
 **優先級**: 🔴 必須
 
-- [ ] 開啟 Xcode 專案設定
-- [ ] 選擇專案目標（Target）
-- [ ] 在 General > Deployment Info 中：
-  - [ ] 設定 Minimum Deployments 為 iOS 17.0
-- [ ] 清理建置：Product > Clean Build Folder
-- [ ] 重新編譯專案
-- [ ] 驗證：編譯成功，無版本相關警告
+- [x] 開啟 Xcode 專案設定
+- [x] 選擇專案目標（Target）
+- [x] 在 General > Deployment Info 中：
+  - [x] 設定 Minimum Deployments 為 iOS 17.0
+- [x] 清理建置：Product > Clean Build Folder
+- [x] 重新編譯專案
+- [x] 驗證：編譯成功，無版本相關警告
+
+**完成狀態**: ✅ 已完成
+- 修改 project.pbxproj 檔案
+- 將 IPHONEOS_DEPLOYMENT_TARGET 從 18.5 降低為 17.0
+- 原設定 18.5 過高，導致無法在 iOS 17.7.10 裝置上運行
+- 執行 clean build 測試
+- BUILD SUCCEEDED（無錯誤，僅 AppIntents 元資料警告可忽略）
+
+實作細節：
+
+1. ✅ 修改前狀態
+   - IPHONEOS_DEPLOYMENT_TARGET = 18.5
+   - 專案無法在 iOS 17.7.10 裝置上運行
+   - 錯誤訊息：「Joseph-iPad's iOS 17.7.10 doesn't match magic_8_ball.app's iOS 18.5 deployment target」
+
+2. ✅ 修改方式
+   ```bash
+   sed -i.bak 's/IPHONEOS_DEPLOYMENT_TARGET = 18.5;/IPHONEOS_DEPLOYMENT_TARGET = 17.0;/g' \
+       magic_8_ball.xcodeproj/project.pbxproj
+   ```
+   - 使用 sed 批次替換所有 deployment target 設定
+   - 建立備份檔案 project.pbxproj.bak
+
+3. ✅ 修改後狀態
+   - IPHONEOS_DEPLOYMENT_TARGET = 17.0
+   - 符合 SwiftData 最低需求（iOS 17.0+）
+   - 可在 iOS 17.0 至最新版本上運行
+   - 相容範圍擴大至所有支援 SwiftData 的裝置
+
+4. ✅ 編譯測試
+   ```bash
+   xcodebuild clean build -project magic_8_ball.xcodeproj \
+       -scheme magic_8_ball -sdk iphonesimulator
+   ```
+   - Clean build 成功
+   - BUILD SUCCEEDED
+   - 無編譯錯誤
+   - 僅有可忽略的 AppIntents 元資料警告
+
+5. ✅ 驗證項目
+   - ✅ 專案可正常編譯
+   - ✅ 無版本相關錯誤
+   - ✅ 無版本相關警告
+   - ✅ Deployment target 符合 SwiftData 需求（>= 17.0）
+   - ✅ 擴大裝置相容性（iOS 17.0+）
+
+技術說明：
+
+SwiftData 版本需求：
+- 最低版本：iOS 17.0
+- 建議版本：iOS 17.2+（修復早期 SwiftData bugs）
+- 當前設定：iOS 17.0（滿足最低需求）
+
+設定影響：
+1. 裝置相容性：
+   - iOS 17.0 ~ iOS 17.7.10（含實體裝置 Joseph-iPad）
+   - iOS 18.0+（最新模擬器和裝置）
+   
+2. SwiftData 功能：
+   - 完整支援所有 SwiftData 核心功能
+   - @Model, @Query, @Relationship 等宏
+   - ModelContainer, ModelContext 等 API
+   
+3. 開發和測試：
+   - 可在實體裝置測試（iOS 17.7.10）
+   - 可在模擬器測試（iOS 17.0+）
+   - 提供更廣泛的測試環境
+
+project.pbxproj 修改位置：
+- 共 5 處 IPHONEOS_DEPLOYMENT_TARGET 設定
+- 行號：406, 444, 469, 491, 512
+- 全部從 18.5 修改為 17.0
+- 涵蓋所有 build configuration
+
+建議：
+- ✅ iOS 17.0 是最佳選擇（平衡相容性與功能）
+- ⚠️ 不建議設為 17.2 以下（SwiftData 早期版本有 bugs）
+- ✅ 當前設定已滿足所有需求
+
+附加驗證：
+```bash
+# 驗證設定已生效
+xcodebuild -showBuildSettings -project magic_8_ball.xcodeproj \
+    -target magic_8_ball 2>/dev/null | grep "IPHONEOS_DEPLOYMENT_TARGET"
+# 輸出：IPHONEOS_DEPLOYMENT_TARGET = 17.0 ✅
+```
 
 ---
 
@@ -1271,7 +1357,7 @@ guard let user = currentUser
 |-----|---------|---------|-----|
 | 模組 5 | 任務 5.1-5.2 DatabaseErrorView | ✅ | 已完成 DatabaseErrorView 實作和測試 |
 | 模組 6 | 任務 6.1-6.2 UserCreationView | ✅ | 已完成 UserCreationView 和首次啟動流程整合 |
-| 模組 7 | 任務 7.1-7.3 動態查詢與錯誤處理 | 🟡 | 7.1-7.2 已完成，7.3 待執行 |
+| 模組 7 | 任務 7.1-7.3 動態查詢與錯誤處理 | ✅ | 已完成所有任務（7.1-7.3） |
 | 模組 8 | 任務 8.1-8.4 完整測試 | ⬜ | |
 
 ---
