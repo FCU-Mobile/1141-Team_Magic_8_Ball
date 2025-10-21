@@ -193,23 +193,6 @@ struct ContentView: View {
                 .padding(.top, 10)
             }
             
-            // 🧪 測試用按鈕（Task 4.2: Cascade 刪除測試）
-            #if DEBUG
-            Button(action: testDeleteUser) {
-                HStack {
-                    Image(systemName: "trash")
-                    Text("🧪 測試刪除用戶")
-                }
-                .font(.caption)
-                .foregroundColor(.white)
-                .padding(.horizontal, 15)
-                .padding(.vertical, 8)
-                .background(Color.red)
-                .cornerRadius(15)
-            }
-            .padding(.top, 20)
-            #endif
-            
             Spacer()
         }
         .padding()
@@ -318,43 +301,6 @@ struct ContentView: View {
             showAnswer = false
         }
         question = ""
-    }
-    
-    /// 測試 Cascade 刪除功能（Task 4.2）
-    private func testDeleteUser() {
-        print("🧪 開始測試 Cascade 刪除...")
-        print("📊 刪除前狀態:")
-        print("   - 用戶數量: \(users.count)")
-        print("   - 記錄數量: \(records.count)")
-        
-        if let user = users.first {
-            print("🗑️ 準備刪除用戶: \(user.name)")
-            print("   - 用戶擁有的記錄數量: \(user.records.count)")
-            
-            // 刪除用戶（應該會 cascade 刪除所有關聯的記錄）
-            modelContext.delete(user)
-            
-            do {
-                try modelContext.save()
-                print("✅ 用戶刪除成功")
-                
-                // 檢查刪除後的狀態
-                print("📊 刪除後狀態:")
-                print("   - 用戶數量: \(users.count)")
-                print("   - 記錄數量: \(records.count)")
-                
-                if records.isEmpty {
-                    print("✅ Cascade 刪除測試通過！所有記錄已一併刪除")
-                } else {
-                    print("⚠️ Cascade 刪除測試失敗！仍有 \(records.count) 筆記錄存在")
-                }
-            } catch {
-                print("❌ 刪除失敗: \(error.localizedDescription)")
-            }
-        } else {
-            print("⚠️ 沒有用戶可供刪除")
-        }
-        print("========================")
     }
 }
 
