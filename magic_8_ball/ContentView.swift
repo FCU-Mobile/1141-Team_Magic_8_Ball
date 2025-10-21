@@ -223,7 +223,7 @@ struct ContentView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             currentAnswer = answers.randomElement() ?? (MagicAnswerType.neutral, "請再試一次", "Please try again")
             
-            // 添加到歷史記錄
+            // 添加到歷史記錄（臨時）
             let record = TemporaryAnswerRecord(
                 question: question,
                 answer: currentAnswer.1,
@@ -233,9 +233,41 @@ struct ContentView: View {
             )
             answerHistory.insert(record, at: 0) // 最新的記錄在前面
             
+            // 儲存到 SwiftData
+            saveAnswer(question: question, answer: currentAnswer.1, answerType: mapToAnswerType(currentAnswer.0))
+            
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 showAnswer = true
             }
+        }
+    }
+    
+    /// 儲存答案到 SwiftData
+    private func saveAnswer(question: String, answer: String, answerType: AnswerType) {
+        do {
+            let record = AnswerRecord(
+                question: question,
+                answer: answer,
+                answerType: answerType,
+                user: currentUser
+            )
+            modelContext.insert(record)
+            try modelContext.save()
+            print("✅ 答案記錄已儲存")
+        } catch {
+            print("❌ 儲存失敗: \(error.localizedDescription)")
+        }
+    }
+    
+    /// 將 MagicAnswerType 對應到 AnswerType
+    private func mapToAnswerType(_ type: MagicAnswerType) -> AnswerType {
+        switch type {
+        case .affirmative:
+            return .positive
+        case .negative:
+            return .negative
+        case .neutral:
+            return .neutral
         }
     }
     

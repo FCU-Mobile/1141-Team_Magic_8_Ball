@@ -275,8 +275,8 @@
 #### ✅ 任務 3.3: 實作基本儲存功能
 **優先級**: 🔴 必須
 
-- [ ] 找到現有的 `performShake()` 或類似函數
-- [ ] 新增儲存邏輯（在顯示答案後）：
+- [x] 找到現有的 `performShake()` 或類似函數
+- [x] 新增儲存邏輯（在顯示答案後）：
   ```swift
   func saveAnswer(question: String, answer: String, answerType: AnswerType) {
       let record = AnswerRecord(
@@ -296,8 +296,18 @@
       }
   }
   ```
-- [ ] 整合到搖晃事件處理邏輯中
-- [ ] 驗證：問答後可在 Console 看到成功訊息
+- [x] 整合到搖晃事件處理邏輯中
+- [x] 驗證：問答後可在 Console 看到成功訊息
+
+**完成狀態**: ✅ 已完成
+- 找到 `getAnswer()` 函數並整合儲存邏輯
+- 新增 `saveAnswer(question:answer:answerType:)` 函數
+- 使用 `currentUser` 作為關聯用戶
+- 使用 `modelContext.insert()` 插入記錄
+- 實作完整的 do-catch 錯誤處理和日誌輸出
+- 新增 `mapToAnswerType()` 輔助函數對應答案類型
+- 在 `getAnswer()` 中呼叫 `saveAnswer()` 進行儲存
+- 保留臨時的 TemporaryAnswerRecord 供現有 UI 使用
 
 ---
 
@@ -678,7 +688,7 @@
 |-----|---------|---------|-----|
 | 模組 1 | 任務 1.1-1.3 資料模型 | ✅ | 已完成所有資料模型 |
 | 模組 2 | 任務 2.1-2.2 ModelContainer | ✅ | 已完成 ModelContainer 設定 |
-| 模組 3 | 任務 3.1-3.3 ContentView 整合 | ⬜ | |
+| 模組 3 | 任務 3.1-3.3 ContentView 整合 | ✅ | 已完成 ContentView SwiftData 整合 |
 | 模組 4 | 任務 4.1-4.3 測試驗證 | ⬜ | |
 
 ### 階段二進度
