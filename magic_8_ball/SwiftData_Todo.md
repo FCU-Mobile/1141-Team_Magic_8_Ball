@@ -131,16 +131,16 @@
 #### ✅ 任務 2.1: ModelContainer 基本設定
 **優先級**: 🔴 必須
 
-- [ ] 開啟 `magic_8_ballApp.swift`
-- [ ] 修改 `sharedModelContainer` 為可選型 `ModelContainer?`
-- [ ] 註冊所有模型：
+- [x] 開啟 `magic_8_ballApp.swift`
+- [x] 修改 `sharedModelContainer` 為可選型 `ModelContainer?`
+- [x] 註冊所有模型：
   ```swift
   let schema = Schema([
       User.self,
       AnswerRecord.self
   ])
   ```
-- [ ] 設定 ModelConfiguration：
+- [x] 設定 ModelConfiguration：
   ```swift
   let modelConfiguration = ModelConfiguration(
       schema: schema,
@@ -148,14 +148,22 @@
       allowsSave: true
   )
   ```
-- [ ] 實作 do-catch 錯誤處理
-- [ ] 初始化失敗時返回 `nil`（不使用 fatalError）
-- [ ] 添加 Console 日誌：
+- [x] 實作 do-catch 錯誤處理
+- [x] 初始化失敗時返回 `nil`（不使用 fatalError）
+- [x] 添加 Console 日誌：
   - 成功：`print("✅ ModelContainer 建立成功")`
   - 失敗：`print("❌ ModelContainer 建立失敗: \(error.localizedDescription)")`
-- [ ] 驗證：App 啟動時查看 Console 輸出
+- [x] 驗證：App 啟動時查看 Console 輸出
 
 **參考代碼**: 見 `SwiftData_Requirements.md` 零、修正 1
+
+**完成狀態**: ✅ 已完成
+- 建立 sharedModelContainer 屬性（可選型）
+- 註冊 User 和 AnswerRecord 兩個模型到 Schema
+- 設定 ModelConfiguration（非記憶體模式，允許儲存）
+- 實作完整的 do-catch 錯誤處理
+- 移除 fatalError，改為返回 nil
+- 添加成功/失敗的 Console 日誌
 
 ---
 
