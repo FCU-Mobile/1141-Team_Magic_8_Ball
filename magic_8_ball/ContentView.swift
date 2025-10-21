@@ -15,7 +15,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State private var question = ""
-    @State private var currentAnswer = (MagicAnswerType.neutral, "", "")
+    @State private var currentAnswer: (AnswerType, String, String) = (.neutral, "", "")
     @State private var showAnswer = false
     @State private var showHistory = false
     @State private var showUserCreation = false
@@ -28,46 +28,6 @@ struct ContentView: View {
     var currentUser: User? {
         users.first  // 因為限制僅 1 個用戶
     }
-    
-    enum MagicAnswerType {
-        case affirmative
-        case neutral
-        case negative
-        
-        var color: Color {
-            switch self {
-            case .affirmative:
-                return .green
-            case .neutral:
-                return .blue
-            case .negative:
-                return .red
-            }
-        }
-    }
-    
-    let answers = [
-        (MagicAnswerType.affirmative, "這是必然", "It is certain"),
-        (MagicAnswerType.affirmative, "肯定是的", "It is decidedly so"),
-        (MagicAnswerType.affirmative, "不用懷疑", "Without a doubt"),
-        (MagicAnswerType.affirmative, "毫無疑問", "Yes, definitely"),
-        (MagicAnswerType.affirmative, "你能依靠它", "You may rely on it"),
-        (MagicAnswerType.affirmative, "如我所見，是的", "As I see it, yes"),
-        (MagicAnswerType.affirmative, "很有可能", "Most likely"),
-        (MagicAnswerType.affirmative, "前景很好", "Outlook good"),
-        (MagicAnswerType.affirmative, "是的", "Yes"),
-        (MagicAnswerType.affirmative, "種種跡象指出「是的」", "Signs point to yes"),
-        (MagicAnswerType.neutral, "回覆籠統，再試試", "Reply hazy try again"),
-        (MagicAnswerType.neutral, "待會再問", "Ask again later"),
-        (MagicAnswerType.neutral, "最好現在不告訴你", "Better not tell you now"),
-        (MagicAnswerType.neutral, "現在無法預測", "Cannot predict now"),
-        (MagicAnswerType.neutral, "專心再問一遍", "Concentrate and ask again"),
-        (MagicAnswerType.negative, "想的美", "Don't count on it"),
-        (MagicAnswerType.negative, "我的回覆是「不」", "My reply is no"),
-        (MagicAnswerType.negative, "我的來源說「不」", "My sources say no"),
-        (MagicAnswerType.negative, "前景不太好", "Outlook not so good"),
-        (MagicAnswerType.negative, "很可疑", "Very doubtful")
-    ]
     
     var body: some View {
         VStack(spacing: 30) {
@@ -237,10 +197,10 @@ struct ContentView: View {
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            currentAnswer = answers.randomElement() ?? (MagicAnswerType.neutral, "請再試一次", "Please try again")
+            currentAnswer = AnswerType.allAnswers.randomElement() ?? (.neutral, "請再試一次", "Please try again")
             
             // 儲存到 SwiftData
-            saveAnswer(question: question, answer: currentAnswer.1, answerType: mapToAnswerType(currentAnswer.0))
+            saveAnswer(question: question, answer: currentAnswer.1, answerType: currentAnswer.0)
             
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 showAnswer = true
@@ -272,18 +232,6 @@ struct ContentView: View {
             print("❌ 儲存失敗: \(error.localizedDescription)")
             errorMessage = "儲存失敗: \(error.localizedDescription)"
             showError = true
-        }
-    }
-    
-    /// 將 MagicAnswerType 對應到 AnswerType
-    private func mapToAnswerType(_ type: MagicAnswerType) -> AnswerType {
-        switch type {
-        case .affirmative:
-            return .positive
-        case .negative:
-            return .negative
-        case .neutral:
-            return .neutral
         }
     }
     
@@ -371,14 +319,7 @@ struct HistoryView: View {
     
     /// 根據答案類型返回顏色
     private func colorForAnswerType(_ type: AnswerType) -> Color {
-        switch type {
-        case .positive:
-            return .green
-        case .negative:
-            return .red
-        case .neutral:
-            return .blue
-        }
+        return type.color
     }
 }
 
