@@ -42,9 +42,21 @@ struct magic_8_ballApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .modelContainer(for: User.self)
+            // 根據 ModelContainer 初始化狀態顯示不同畫面
+            if let container = sharedModelContainer {
+                ContentView()
+                    .modelContainer(container)
+            } else {
+                DatabaseErrorView()
+            }
         }
+    }
+}
+
+/// 資料庫錯誤畫面（暫時實作，階段二會完善）
+struct DatabaseErrorView: View {
+    var body: some View {
+        Text("資料庫初始化失敗")
     }
 }
 
