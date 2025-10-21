@@ -209,6 +209,31 @@ struct ContentView: View {
         .onAppear {
             // 觸發用戶建立邏輯
             _ = currentUser
+            
+            // 測試用詳細日誌
+            print("=== SwiftData 狀態檢查 ===")
+            print("📊 用戶數量: \(users.count)")
+            print("📊 記錄數量: \(records.count)")
+            
+            if let user = users.first {
+                print("👤 用戶資訊:")
+                print("   - ID: \(user.id)")
+                print("   - 名稱: \(user.name)")
+                print("   - 建立時間: \(user.createdAt)")
+                print("   - 記錄數量: \(user.records.count)")
+            } else {
+                print("⚠️ 沒有找到用戶")
+            }
+            
+            print("📝 最近的記錄:")
+            if records.isEmpty {
+                print("   ⚠️ 沒有任何記錄")
+            } else {
+                for (index, record) in records.prefix(3).enumerated() {
+                    print("   \(index + 1). \(record.question) → \(record.answer)")
+                }
+            }
+            print("========================")
         }
         .sheet(isPresented: $showHistory) {
             HistoryView(answerHistory: answerHistory)
