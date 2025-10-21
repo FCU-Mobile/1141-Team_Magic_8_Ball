@@ -31,6 +31,23 @@ struct ContentView: View {
     @State private var answerHistory: [TemporaryAnswerRecord] = []
     @State private var showHistory = false
     
+    /// 當前用戶（自動建立預設用戶）
+    var currentUser: User {
+        if let user = users.first {
+            return user
+        } else {
+            // 自動建立預設用戶
+            let newUser = User(
+                name: "我的占卜",
+                birthday: nil,
+                gender: nil
+            )
+            modelContext.insert(newUser)
+            try? modelContext.save()
+            return newUser
+        }
+    }
+    
     enum MagicAnswerType {
         case affirmative
         case neutral
@@ -189,6 +206,10 @@ struct ContentView: View {
                 endPoint: .bottom
             )
         )
+        .onAppear {
+            // 觸發用戶建立邏輯
+            _ = currentUser
+        }
         .sheet(isPresented: $showHistory) {
             HistoryView(answerHistory: answerHistory)
         }

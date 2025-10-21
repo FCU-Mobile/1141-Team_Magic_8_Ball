@@ -236,7 +236,7 @@
 #### ✅ 任務 3.2: 實作自動建立預設用戶邏輯
 **優先級**: 🔴 必須
 
-- [ ] 新增 `currentUser` 計算屬性：
+- [x] 新增 `currentUser` 計算屬性：
   ```swift
   var currentUser: User {
       if let user = users.first {
@@ -254,13 +254,21 @@
       }
   }
   ```
-- [ ] 在 `.onAppear` 中確保用戶存在：
+- [x] 在 `.onAppear` 中確保用戶存在：
   ```swift
   .onAppear {
       _ = currentUser  // 觸發用戶建立邏輯
   }
   ```
-- [ ] 驗證：首次啟動 App 時自動建立預設用戶
+- [x] 驗證：首次啟動 App 時自動建立預設用戶
+
+**完成狀態**: ✅ 已完成
+- 新增 `currentUser` 計算屬性，實作用戶自動建立邏輯
+- 檢查 `users.first`：存在則返回，不存在則建立預設用戶
+- 使用 `modelContext.insert()` 插入新用戶
+- 使用 `try? modelContext.save()` 儲存到資料庫
+- 在 `.onAppear` 中觸發 `currentUser` 確保首次啟動時建立用戶
+- 新增中文註解說明用戶建立邏輯
 
 ---
 
