@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
-// 新增歷史記錄結構
-struct AnswerRecord: Identifiable {
+// 臨時的歷史記錄結構（將逐步替換為 SwiftData 的 AnswerRecord）
+struct TemporaryAnswerRecord: Identifiable {
     let id = UUID()
     let question: String
     let answer: String
@@ -18,10 +19,16 @@ struct AnswerRecord: Identifiable {
 }
 
 struct ContentView: View {
+    // SwiftData 查詢
+    @Query private var users: [User]
+    @Query(sort: \AnswerRecord.timestamp, order: .reverse)
+    private var records: [AnswerRecord]
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var question = ""
     @State private var currentAnswer = (MagicAnswerType.neutral, "", "")
     @State private var showAnswer = false
-    @State private var answerHistory: [AnswerRecord] = []
+    @State private var answerHistory: [TemporaryAnswerRecord] = []
     @State private var showHistory = false
     
     enum MagicAnswerType {
@@ -196,7 +203,7 @@ struct ContentView: View {
             currentAnswer = answers.randomElement() ?? (MagicAnswerType.neutral, "請再試一次", "Please try again")
             
             // 添加到歷史記錄
-            let record = AnswerRecord(
+            let record = TemporaryAnswerRecord(
                 question: question,
                 answer: currentAnswer.1,
                 englishAnswer: currentAnswer.2,
@@ -221,7 +228,7 @@ struct ContentView: View {
 
 // 新增歷史記錄視圖
 struct HistoryView: View {
-    let answerHistory: [AnswerRecord]
+    let answerHistory: [TemporaryAnswerRecord]
     @Environment(\.dismiss) var dismiss
     
     var body: some View {

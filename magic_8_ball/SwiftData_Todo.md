@@ -206,22 +206,30 @@
 #### ✅ 任務 3.1: 新增 @Query 查詢
 **優先級**: 🔴 必須
 
-- [ ] 開啟 `ContentView.swift`
-- [ ] 新增 SwiftData 匯入：`import SwiftData`
-- [ ] 新增用戶查詢：
+- [x] 開啟 `ContentView.swift`
+- [x] 新增 SwiftData 匯入：`import SwiftData`
+- [x] 新增用戶查詢：
   ```swift
   @Query private var users: [User]
   ```
-- [ ] 新增記錄查詢（按時間倒序）：
+- [x] 新增記錄查詢（按時間倒序）：
   ```swift
   @Query(sort: \AnswerRecord.timestamp, order: .reverse)
   private var records: [AnswerRecord]
   ```
-- [ ] 新增 ModelContext：
+- [x] 新增 ModelContext：
   ```swift
   @Environment(\.modelContext) private var modelContext
   ```
-- [ ] 驗證：編譯無錯誤
+- [x] 驗證：編譯無錯誤
+
+**完成狀態**: ✅ 已完成
+- 新增 `import SwiftData` 匯入
+- 新增 `@Query private var users: [User]` 查詢用戶
+- 新增 `@Query(sort: \AnswerRecord.timestamp, order: .reverse) private var records: [AnswerRecord]` 查詢記錄（按時間倒序）
+- 新增 `@Environment(\.modelContext) private var modelContext` 取得 ModelContext
+- 重新命名原有的 `AnswerRecord` 結構為 `TemporaryAnswerRecord` 避免命名衝突
+- SwiftData 查詢已準備就緒，等待後續任務使用
 
 ---
 
