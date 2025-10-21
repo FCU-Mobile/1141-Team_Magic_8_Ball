@@ -76,15 +76,15 @@
 - Console 顯示 ModelContainer 建立成功
 
 **實際結果**: 
-- [ ] ✅ 通過
-- [X] ❌ 失敗 - 原因: Console 沒有顯示 ModelContainer 建立成功
+- [x] ✅ 通過
+- [ ] ❌ 失敗 - 原因: Console 沒有顯示 ModelContainer 建立成功
 
 ---
 
 #### 步驟 5: 檢查資料持久化
 - [X] 檢查 Console 輸出，查看是否有用戶資料
-- [ ] 使用 Xcode 的 View Hierarchy 檢查 SwiftData 查詢結果
-- [ ] 或者添加臨時的 debug 代碼顯示記錄數量：
+- [x] 使用 Xcode 的 View Hierarchy 檢查 SwiftData 查詢結果
+- [x] 或者添加臨時的 debug 代碼顯示記錄數量：
   ```swift
   .onAppear {
       print("📊 用戶數量: \(users.count)")
@@ -103,15 +103,27 @@
 - 之前的問答記錄仍然存在
 
 **實際結果**: 
-- [ ] ✅ 通過
-- [X] ❌ 失敗 - 原因: _______________
+- [x] ✅ 通過
+- [ ] ❌ 失敗 - 原因: _______________
 
 **Console 輸出**:
 ```
--[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
--[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
-Snapshotting a view (0x101d0ff10, UIKeyboardImpl) that is not in a visible window requires afterScreenUpdates:YES.
-[C:3] Error received: Connection interrupted.
+✅ ModelContainer 建立成功
+=== SwiftData 狀態檢查 ===
+📊 用戶數量: 1
+📊 記錄數量: 4
+👤 用戶資訊:
+   - ID: 4F9F003E-CD9E-49F6-A067-2585FC45C285
+   - 名稱: 我的占卜
+   - 建立時間: 2025-10-21 15:22:42 +0000
+   - 記錄數量: 4
+📝 最近的記錄:
+   1. LLL → 前景很好
+   2. LLL → 我的來源說「不」
+   3. KKK → 我的來源說「不」
+========================
+Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
 ```
 
 ---
@@ -123,12 +135,12 @@ Snapshotting a view (0x101d0ff10, UIKeyboardImpl) that is not in a visible windo
 - [x] 問答功能正常運作
 - [x] Console 顯示儲存成功訊息
 - [x] 資料在 App 重啟後仍然存在（需實際測試）
-- [ ] 用戶資料正確（名稱：我的占卜）
-- [ ] 記錄數量正確
+- [x] 用戶資料正確（名稱：我的占卜）
+- [x] 記錄數量正確
 
 #### 整體評估
-- [ ] ✅ **測試通過** - 資料持久化功能正常
-- [x] ⚠️ **部分通過** - 有小問題但不影響核心功能
+- [x] ✅ **測試通過** - 資料持久化功能正常
+- [ ] ⚠️ **部分通過** - 有小問題但不影響核心功能
 - [ ] ❌ **測試失敗** - 資料無法持久化
 
 #### 發現的問題

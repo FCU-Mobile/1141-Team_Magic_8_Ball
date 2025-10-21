@@ -31,21 +31,9 @@ struct ContentView: View {
     @State private var showHistory = false
     @State private var showUserCreation = false
     
-    /// 當前用戶（自動建立預設用戶）
-    var currentUser: User {
-        if let user = users.first {
-            return user
-        } else {
-            // 自動建立預設用戶
-            let newUser = User(
-                name: "我的占卜",
-                birthday: nil,
-                gender: nil
-            )
-            modelContext.insert(newUser)
-            try? modelContext.save()
-            return newUser
-        }
+    /// 當前用戶（動態查詢）
+    var currentUser: User? {
+        users.first  // 因為限制僅 1 個用戶
     }
     
     enum MagicAnswerType {
@@ -210,9 +198,6 @@ struct ContentView: View {
             // 檢查是否需要顯示用戶建立畫面
             if users.isEmpty {
                 showUserCreation = true
-            } else {
-                // 觸發用戶建立邏輯
-                _ = currentUser
             }
             
             // 測試用詳細日誌
@@ -277,12 +262,18 @@ struct ContentView: View {
     
     /// 儲存答案到 SwiftData
     private func saveAnswer(question: String, answer: String, answerType: AnswerType) {
+        // 確保有用戶才儲存
+        guard let user = currentUser else {
+            print("⚠️ 無法儲存：尚未建立用戶")
+            return
+        }
+        
         do {
             let record = AnswerRecord(
                 question: question,
                 answer: answer,
                 answerType: answerType,
-                user: currentUser
+                user: user
             )
             modelContext.insert(record)
             try modelContext.save()

@@ -2,7 +2,6 @@
 //  UserCreationView.swift
 //  magic_8_ball
 //
-//  Created by SwiftData Integration on 2025/1/24.
 //
 
 import SwiftUI
