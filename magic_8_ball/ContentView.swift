@@ -2,7 +2,6 @@
 //  ContentView.swift
 //  magic_8_ball
 //
-//  Created by 林政佑 on 2025/8/4.
 //
 
 import SwiftUI
@@ -30,6 +29,7 @@ struct ContentView: View {
     @State private var showAnswer = false
     @State private var answerHistory: [TemporaryAnswerRecord] = []
     @State private var showHistory = false
+    @State private var showUserCreation = false
     
     /// 當前用戶（自動建立預設用戶）
     var currentUser: User {
@@ -207,8 +207,13 @@ struct ContentView: View {
             )
         )
         .onAppear {
-            // 觸發用戶建立邏輯
-            _ = currentUser
+            // 檢查是否需要顯示用戶建立畫面
+            if users.isEmpty {
+                showUserCreation = true
+            } else {
+                // 觸發用戶建立邏輯
+                _ = currentUser
+            }
             
             // 測試用詳細日誌
             print("=== SwiftData 狀態檢查 ===")
@@ -234,6 +239,9 @@ struct ContentView: View {
                 }
             }
             print("========================")
+        }
+        .sheet(isPresented: $showUserCreation) {
+            UserCreationView()
         }
         .sheet(isPresented: $showHistory) {
             HistoryView(answerHistory: answerHistory)

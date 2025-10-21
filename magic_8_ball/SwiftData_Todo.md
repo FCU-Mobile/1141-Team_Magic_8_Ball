@@ -639,7 +639,7 @@ UI/UX 設計：
 #### ✅ 任務 6.2: 整合首次啟動流程
 **優先級**: 🔴 必須
 
-- [ ] 修改 ContentView 的 `currentUser` 邏輯：
+- [x] 修改 ContentView 的 `currentUser` 邏輯：
   ```swift
   @State private var showUserCreation = false
   
@@ -657,7 +657,42 @@ UI/UX 設計：
       }
   }
   ```
-- [ ] 驗證：首次啟動顯示用戶建立畫面
+- [x] 驗證：首次啟動顯示用戶建立畫面
+
+**完成狀態**: ✅ 已完成
+- 新增 @State 變數 showUserCreation
+- 修改 onAppear 邏輯：檢查 users.isEmpty
+- 新增 sheet 修飾符顯示 UserCreationView
+- 首次啟動時自動彈出用戶建立表單
+
+實作細節：
+
+1. ✅ State 變數管理
+   - @State private var showUserCreation = false
+   - 控制 UserCreationView sheet 顯示
+
+2. ✅ onAppear 邏輯修改
+   - if users.isEmpty { showUserCreation = true }
+   - 首次啟動（無用戶）時顯示建立畫面
+   - 有用戶時觸發 currentUser 自動建立邏輯（保留舊邏輯作為備用）
+
+3. ✅ Sheet 整合
+   - .sheet(isPresented: $showUserCreation) { UserCreationView() }
+   - 顯示 UserCreationView 模態畫面
+   - 用戶建立完成後自動關閉（UserCreationView 內部 dismiss()）
+
+4. ✅ 流程設計
+   - 首次啟動 → 檢測 users.isEmpty → 顯示 UserCreationView
+   - 用戶填寫資料 → 建立 User → dismiss() → 返回 ContentView
+   - 後續啟動 → users 有資料 → 直接使用 currentUser
+
+編譯測試：
+- ✅ BUILD SUCCEEDED
+- ✅ 無編譯錯誤
+- ✅ 無警告訊息
+
+變更摘要：
+- ContentView.swift: +1 狀態變數, 修改 onAppear, +1 sheet
 
 ---
 
@@ -898,7 +933,7 @@ UI/UX 設計：
 | 模組 | 計畫任務 | 完成狀態 | 備註 |
 |-----|---------|---------|-----|
 | 模組 5 | 任務 5.1-5.2 DatabaseErrorView | ✅ | 已完成 DatabaseErrorView 實作和測試 |
-| 模組 6 | 任務 6.1-6.2 UserCreationView | ⬜ | |
+| 模組 6 | 任務 6.1-6.2 UserCreationView | ✅ | 已完成 UserCreationView 和首次啟動流程整合 |
 | 模組 7 | 任務 7.1-7.3 動態查詢與錯誤處理 | ⬜ | |
 | 模組 8 | 任務 8.1-8.4 完整測試 | ⬜ | |
 
