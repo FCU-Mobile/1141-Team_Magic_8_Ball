@@ -422,13 +422,38 @@
 #### ✅ 任務 5.1: 完善 DatabaseErrorView
 **優先級**: 🔴 必須
 
-- [ ] 開啟 `magic_8_ballApp.swift` 或建立 `Views/DatabaseErrorView.swift`
-- [ ] 實作完整的錯誤畫面（參考 `SwiftData_Requirements.md` 修正 1）：
-  - [ ] 錯誤圖示（`exclamationmark.triangle.fill`）
-  - [ ] 錯誤標題「資料庫初始化失敗」
-  - [ ] 解決方案列表（重啟 App、檢查空間、重新安裝）
-  - [ ] 「重新啟動」按鈕
-- [ ] 驗證：編譯無錯誤，畫面顯示正常
+- [x] 開啟 `magic_8_ballApp.swift` 或建立 `Views/DatabaseErrorView.swift`
+- [x] 實作完整的錯誤畫面（參考 `SwiftData_Requirements.md` 修正 1）：
+  - [x] 錯誤圖示（`exclamationmark.triangle.fill`）
+  - [x] 錯誤標題「資料庫初始化失敗」
+  - [x] 解決方案列表（重啟 App、檢查空間、重新安裝）
+  - [x] 「重新啟動」按鈕
+- [x] 驗證：編譯無錯誤，畫面顯示正常
+
+**完成狀態**: ✅ 已完成
+- 建立 Views 目錄
+- 建立 Views/DatabaseErrorView.swift 檔案（148 行，3821 字元）
+- 實作完整的錯誤畫面 UI：
+  - ✅ 橘色錯誤圖示（exclamationmark.triangle.fill，80pt）
+  - ✅ 錯誤標題「資料庫初始化失敗」（大字體，粗體）
+  - ✅ 錯誤說明文字（次要顏色，居中對齊）
+  - ✅ 解決方案列表（3 個解決方案）：
+    1. 重新啟動應用程式（arrow.clockwise 圖示）
+    2. 檢查裝置儲存空間是否足夠（internaldrive 圖示）
+    3. 嘗試重新安裝應用程式（trash 圖示）
+  - ✅ 解決方案卡片樣式（圓角背景，次要背景色）
+  - ✅ 「重新啟動」按鈕（漸層背景，陰影效果）
+  - ✅ 完整的背景漸層設計
+- 建立 SolutionRow 輔助元件：
+  - 圖示 + 文字的橫向排列
+  - 統一的樣式和間距
+- 實作 restartApp() 函數：
+  - 提供用戶操作提示
+  - 添加 Console 日誌
+  - 註解說明 iOS 限制
+- 添加 SwiftUI Preview 支援
+- 移除 magic_8_ballApp.swift 中的暫時實作
+- 編譯測試通過（BUILD SUCCEEDED）
 
 ---
 
