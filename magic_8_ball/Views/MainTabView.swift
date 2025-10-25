@@ -21,6 +21,12 @@ struct MainTabView: View {
                 .tabItem {
                     Label("記錄", systemImage: "clock.arrow.circlepath")
                 }
+            
+            // 統計分析
+            StatisticsView()
+                .tabItem {
+                    Label("統計", systemImage: "chart.bar.fill")
+                }
         }
     }
 }
