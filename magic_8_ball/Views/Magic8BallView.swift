@@ -8,10 +8,23 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Environment Key for currentUser
+private struct CurrentUserKey: EnvironmentKey {
+    static let defaultValue: User? = nil
+}
+
+extension EnvironmentValues {
+    var currentUser: User? {
+        get { self[CurrentUserKey.self] }
+        set { self[CurrentUserKey.self] = newValue }
+    }
+}
+
 struct Magic8BallView: View {
     // SwiftData 查詢
     @Query private var users: [User]
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.currentUser) private var currentUser
     
     @State private var question = ""
     @State private var currentAnswer: (AnswerType, String, String) = (.neutral, "", "")
@@ -21,11 +34,6 @@ struct Magic8BallView: View {
     // 錯誤處理
     @State private var showError = false
     @State private var errorMessage = ""
-    
-    /// 當前用戶（動態查詢）
-    var currentUser: User? {
-        users.first  // 因為限制僅 1 個用戶
-    }
     
     var body: some View {
         NavigationStack {
@@ -181,8 +189,8 @@ struct Magic8BallView: View {
     
     /// 儲存答案到 SwiftData
     private func saveAnswer(question: String, answer: String, answerType: AnswerType) {
-        // 確保有用戶才儲存
-        guard let user = currentUser else {
+        // 直接使用查詢到的第一個用戶
+        guard let user = users.first else {
             print("⚠️ 無法儲存：尚未建立用戶")
             errorMessage = "無法儲存記錄：尚未建立用戶"
             showError = true
@@ -198,7 +206,7 @@ struct Magic8BallView: View {
             )
             modelContext.insert(record)
             try modelContext.save()
-            print("✅ 答案記錄已儲存")
+            print("✅ 答案記錄已儲存到 SwiftData")
         } catch {
             print("❌ 儲存失敗: \(error.localizedDescription)")
             errorMessage = "儲存失敗: \(error.localizedDescription)"
@@ -245,6 +253,9 @@ struct EquilateralTriangle: Shape {
 }
 
 #Preview {
+    // 取用預設用戶
+    let previewUser = User(name: "預覽用戶")
     Magic8BallView()
+        .environment(\.currentUser, previewUser)
         .modelContainer(for: [User.self, AnswerRecord.self], inMemory: true)
 }
