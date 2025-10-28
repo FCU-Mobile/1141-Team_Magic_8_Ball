@@ -1,369 +1,184 @@
-# Magic 8 Ball - 神奇八號球 iOS App 🎱
+# Magic 8 Ball - 神奇八號球 🎱
 
-> 一個使用 SwiftUI 和 SwiftData 開發的現代化占卜應用程式
+> 你的掌上神秘顧問，為人生大小問題指點迷津
 
-## 📋 專案簡介
+## 🌟 關於 Magic 8 Ball
 
-Magic 8 Ball 是一款互動式占卜應用程式，讓使用者提出問題並獲得神秘的答案。應用程式使用 SwiftData 框架進行資料持久化，記錄所有占卜歷史，並提供優雅的使用者介面和流暢的動畫效果。
+還在為選擇猶豫不決嗎？讓神奇八號球為你指引方向！
 
-### ✨ 主要功能
+Magic 8 Ball 是一款充滿趣味的占卜應用程式，無論是「今天該吃什麼？」、「這個決定對嗎？」還是「我該勇敢追夢嗎？」，只要提出問題，搖動八號球，就能獲得神秘的答案。所有的占卜記錄都會自動保存，讓你隨時回顧命運的指引。
 
-- 🔮 **占卜功能**：輸入問題，搖動神奇八號球獲得答案
-- 📝 **歷史記錄**：自動保存所有占卜問答，方便回顧
-- 👤 **使用者管理**：首次啟動時建立個人帳號
-- 💾 **資料持久化**：使用 SwiftData 本地儲存所有資料
-- 🎨 **精美介面**：動畫效果、漸層色彩、響應式設計
-- ⚠️ **錯誤處理**：完善的錯誤處理與使用者提示機制
+### ✨ 你可以用它做什麼
 
-### 🎯 答案分類
+- 🔮 **隨時占卜**：輸入任何問題，立即獲得神秘答案
+- 📱 **桌面小工具**：不用開啟 App，直接在桌面快速占卜
+- 📝 **回顧過往**：保存完整占卜歷史，看看命運如何指引你
+- 🎨 **美麗介面**：精心設計的動畫與漸層色彩，讓占卜更有儀式感
+- 🔒 **隱私保護**：所有資料僅存儲在你的裝置上，完全私密
 
-- **肯定類 (綠色)**：10 種正面答案
-- **否定類 (紅色)**：5 種否定答案  
-- **中性類 (藍色)**：5 種模糊答案
+### 🎯 20 種神秘答案
 
-共 20 種不同的中英文對照答案。
+八號球擁有 20 種不同的答案，分為三大類：
 
----
+- **肯定答案 (綠色)**：10 種鼓勵你前進的正面回應
+- **否定答案 (紅色)**：5 種建議你三思的謹慎提醒  
+- **中性答案 (藍色)**：5 種留給你思考空間的模糊回應
 
-## 📂 專案結構
-
-```
-1141-Team_Magic_8_Ball/
-│
-├── magic_8_ball.xcodeproj/          # Xcode 專案檔案
-│   ├── project.pbxproj              # 專案設定檔
-│   └── xcshareddata/                # 共享資料
-│
-├── magic_8_ball/                    # 主要程式碼目錄
-│   │
-│   ├── magic_8_ballApp.swift       # 🎯 應用程式進入點
-│   │                                # - 初始化 SwiftData ModelContainer
-│   │                                # - 註冊資料模型 (User, AnswerRecord)
-│   │                                # - 錯誤處理與 DatabaseErrorView 顯示
-│   │
-│   ├── ContentView.swift            # 📱 主視圖進入點
-│   │                                # - 呼叫 MainTabView 作為根視圖
-│   │
-│   ├── Models/                      # 📊 資料模型層
-│   │   │
-│   │   ├── User.swift               # 👤 使用者資料模型
-│   │   │                            # - @Model 標記 SwiftData 模型
-│   │   │                            # - 屬性：id, name, birthday, gender
-│   │   │                            # - 關聯：一對多 AnswerRecord (cascade delete)
-│   │   │
-│   │   ├── AnswerRecord.swift       # 📝 占卜記錄模型
-│   │   │                            # - 記錄每次占卜的問題與答案
-│   │   │                            # - 屬性：id, question, answer, answerType, timestamp
-│   │   │                            # - 關聯：多對一 User
-│   │   │
-│   │   └── AnswerType.swift         # 🎲 答案類型枚舉
-│   │                                # - 三種類型：positive, negative, neutral
-│   │                                # - 包含所有 20 種預設答案 (中英文對照)
-│   │                                # - 定義對應顏色 (綠/紅/藍)
-│   │
-│   ├── Views/                       # 🖼️ 使用者介面層
-│   │   │
-│   │   ├── MainTabView.swift        # 📑 主標籤視圖
-│   │   │                            # - TabView 底部導航
-│   │   │                            # - 兩個標籤：占卜 & 記錄
-│   │   │
-│   │   ├── Magic8BallView.swift    # 🎱 神奇八號球主畫面
-│   │   │                            # - 問題輸入介面
-│   │   │                            # - 八號球動畫與答案顯示
-│   │   │                            # - 將答案儲存至 SwiftData
-│   │   │                            # - 自動觸發 UserCreationView (首次啟動)
-│   │   │
-│   │   ├── HistoryView.swift        # 📜 歷史記錄視圖
-│   │   │                            # - 顯示所有占卜記錄
-│   │   │                            # - 按時間倒序排列
-│   │   │                            # - 依答案類型顯示不同顏色
-│   │   │
-│   │   ├── UserCreationView.swift  # 👥 使用者建立畫面
-│   │   │                            # - 首次啟動引導流程
-│   │   │                            # - 輸入名稱、生日、性別
-│   │   │                            # - 建立並儲存使用者資料
-│   │   │
-│   │   └── DatabaseErrorView.swift # ⚠️ 資料庫錯誤畫面
-│   │                                # - ModelContainer 初始化失敗時顯示
-│   │                                # - 提供解決方案與重啟提示
-│   │
-│   ├── Assets.xcassets/             # 🎨 資源檔案
-│   │   ├── AppIcon.appiconset/      # 應用程式圖示
-│   │   └── AccentColor.colorset/    # 主題色彩
-│   │
-│   ├── magic_8_ball.entitlements    # 🔐 應用程式權限設定
-│   │
-│   └── md/                          # 📚 專案文件
-│       │
-│       ├── SwiftData_Requirements.md     # SwiftData 需求規格
-│       ├── SwiftData_MVP_Strategy.md     # MVP 開發策略
-│       ├── SwiftData_Test_Results.md     # 測試結果報告
-│       │
-│       └── Reports/                      # 📋 開發報告
-│           ├── Stage1_Completion_Report.md
-│           ├── TabView_Navigation_Implementation.md
-│           ├── Task_5.2_Test_Results.md
-│           ├── Task_8.1_First_Launch_Test.md
-│           ├── Cascade_Delete_Test.md
-│           └── SwiftData_Todo.md
-│
-├── magic_8_ballTests/               # 🧪 單元測試
-│   └── magic_8_ballTests.swift      # 測試案例
-│
-├── magic_8_ballUITests/             # 🖱️ UI 測試
-│   ├── magic_8_ballUITests.swift
-│   └── magic_8_ballUITestsLaunchTests.swift
-│
-├── .gitignore                       # Git 忽略檔案設定
-├── .gitattributes                   # Git 屬性設定
-└── README.md                        # 📖 本文件
-```
+每個答案都有中英文對照，讓你更清楚理解八號球的指引。
 
 ---
 
-## 🔧 技術架構
+## 📱 如何使用
 
-### 核心技術
+### 🚀 開始使用
 
-- **語言**：Swift 5.9+
-- **框架**：SwiftUI
-- **資料持久化**：SwiftData
-- **最低支援版本**：iOS 17.0+
-- **開發工具**：Xcode 15.0+
+### 系統需求
 
-### SwiftData 架構
+- iPhone 或 iPad，執行 iOS 17.0 或更新版本
+- 約 10 MB 儲存空間
 
-#### 資料模型關係
+### 安裝方式
 
-```
-User (使用者)
-  └── @Relationship(cascade delete)
-      └── AnswerRecord[] (占卜記錄)
-            ├── question: String
-            ├── answer: String
-            ├── answerType: AnswerType
-            └── timestamp: Date
-```
+目前 Magic 8 Ball 還在開發階段，如果你想體驗：
 
-#### 特性
-
-- ✅ **唯一性約束**：User 和 AnswerRecord 的 id 使用 `@Attribute(.unique)`
-- ✅ **級聯刪除**：刪除使用者時自動刪除所有相關記錄
-- ✅ **反向關聯**：雙向關聯確保資料一致性
-- ✅ **錯誤處理**：完善的 do-catch 錯誤處理機制
-
----
-
-## 🚀 開始使用
-
-### 環境需求
-
-- macOS 14.0 (Sonoma) 或更新版本
-- Xcode 15.0 或更新版本
-- iOS 17.0+ 的實體裝置或模擬器
-
-### 安裝步驟
-
-1. **複製專案**
+1. **取得原始碼**
    ```bash
    git clone https://github.com/FCU-Mobile/1141-Team_Magic_8_Ball.git
    cd 1141-Team_Magic_8_Ball
    ```
 
-2. **開啟專案**
+2. **使用 Xcode 開啟**
    ```bash
    open magic_8_ball.xcodeproj
    ```
 
-3. **選擇目標裝置**
-   - 在 Xcode 中選擇模擬器或實體裝置
+3. **連接你的裝置或使用模擬器**
+   - 在 Xcode 中選擇目標裝置
 
-4. **建置並執行**
-   - 按下 `⌘ + R` 或點擊 Run 按鈕
+4. **執行應用程式**
+   - 按下 `⌘ + R` 或點擊播放按鈕
 
-### 首次啟動流程
+### 第一次使用
 
-1. 應用程式啟動後會自動顯示「建立帳號」畫面
-2. 輸入名稱（必填）
-3. 選擇性輸入生日和性別
-4. 點擊「建立帳號」完成設定
-5. 開始使用占卜功能
+1. 開啟 App 後，會看到「建立帳號」畫面
+2. 輸入你的名稱（必填）
+3. 你可以選擇填寫生日和性別，也可以跳過
+4. 點擊「建立帳號」就完成了！
+5. 現在可以開始向八號球提問了
 
 ---
 
-## 📱 功能說明
+## 🎮 功能介紹
 
 ### 1. 占卜功能 🎱
 
-**位置**：主畫面「占卜」標籤
+**在 App 中占卜：**
 
-**操作步驟**：
-1. 在輸入框輸入你的問題
-2. 點擊「獲得答案」按鈕
-3. 觀看八號球動畫並顯示答案
-4. 點擊「再問一次」重置
+1. 開啟 App，你會看到一顆神秘的黑色八號球
+2. 在輸入框中輸入你的問題（例如：「我今天會順利嗎？」）
+3. 點擊「獲得答案」按鈕
+4. 八號球會顯示出神秘的答案
+5. 想問下一個問題？點擊「再問一次」即可
 
-**技術實現**：
-- 使用 `withAnimation` 實現流暢的顯示/隱藏動畫
-- 從 20 種預設答案中隨機選擇
-- 自動儲存到 SwiftData
-- 使用 `EquilateralTriangle` 自訂形狀顯示答案
+**使用桌面小工具：**
 
-### 2. 歷史記錄 📜
+1. 長按 iPhone 主畫面空白處
+2. 點擊左上角的「+」號
+3. 搜尋「Magic 8 Ball」
+4. 選擇你喜歡的尺寸（中型或大型）
+5. 添加到桌面
+6. 之後只要點擊小工具上的八號球，就能快速獲得答案！
 
-**位置**：底部「記錄」標籤
+### 2. 查看占卜歷史 📜
 
-**功能**：
-- 顯示所有占卜記錄
-- 按時間倒序排列（最新在上）
-- 依答案類型顯示對應顏色
-- 顯示問題、答案、時間戳記
+想回顧過去的占卜記錄嗎？
 
-**技術實現**：
-- 使用 `@Query(sort: \AnswerRecord.timestamp, order: .reverse)` 自動排序
-- SwiftUI List 渲染
-- 空狀態提示畫面
+1. 點擊底部「記錄」標籤
+2. 這裡會顯示你所有的占卜記錄
+3. 最新的記錄會顯示在最上方
+4. 答案會用不同顏色標示：
+   - 🟢 綠色：正面答案
+   - 🔴 紅色：否定答案
+   - 🔵 藍色：中性答案
 
-### 3. 使用者管理 👤
+### 3. 精美的設計 🎨
 
-**功能**：
-- 首次啟動自動觸發建立流程
-- 儲存個人資訊（名稱、生日、性別）
-- 資料僅存本機，保護隱私
+我們精心設計了每個細節：
 
-**技術實現**：
-- 使用 `.sheet(isPresented:)` 顯示模態畫面
-- 檢查 `users.isEmpty` 判斷是否首次啟動
-- DatePicker 日期選擇器
-- Segmented Picker 性別選擇
-
----
-
-## 🎨 設計特色
-
-### 視覺元素
-
-- **漸層背景**：藍紫色漸層營造神秘氛圍
-- **八號球設計**：
-  - 黑灰色漸層圓形
-  - 中央數字 "８"
-  - 答案顯示時轉換為三角形視窗
-- **顏色系統**：
-  - 🟢 綠色：肯定答案
-  - 🔴 紅色：否定答案
-  - 🔵 藍色：中性答案
-
-### 動畫效果
-
-- **淡入淡出**：答案顯示使用 `.easeOut` 和 `.spring` 動畫
-- **縮放效果**：答案文字使用 `.scale` transition
-- **按鈕互動**：按下時的視覺回饋
-- **陰影效果**：增加深度感
+- **神秘漸層背景**：藍紫色漸層營造神秘氛圍
+- **經典八號球**：
+  - 黑色圓球配上白色圓圈
+  - 中央的數字「8」
+  - 答案會以三角形視窗顯示
+- **流暢動畫**：答案顯示時的淡入效果
+- **顏色系統**：不同答案類型用不同顏色，一目了然
 
 ---
 
-## 🧪 測試
+## 🔒 隱私與安全
 
-### 執行測試
+你的隱私對我們很重要：
 
-```bash
-# 執行所有測試
-⌘ + U
-
-# 或使用命令列
-xcodebuild test -scheme magic_8_ball -destination 'platform=iOS Simulator,name=iPhone 15'
-```
-
-### 測試覆蓋
-
-- ✅ SwiftData 模型初始化測試
-- ✅ 使用者建立流程測試
-- ✅ 級聯刪除功能測試
-- ✅ 首次啟動流程測試
-- ✅ UI 啟動測試
+- ✅ **本地儲存**：所有資料都只存在你的裝置上
+- ✅ **不連網路**：App 不需要網路連線，也不會上傳任何資料
+- ✅ **完全私密**：沒有人能看到你的問題和答案，只有你自己知道
 
 ---
 
-## 📝 開發紀錄
+## ❓ 常見問題
 
-### 已完成功能
+**Q: 八號球的答案準確嗎？**  
+A: Magic 8 Ball 是一個娛樂占卜工具，答案是隨機產生的。請把它當作一個有趣的參考，重要決定還是要靠自己的判斷哦！
 
-- ✅ SwiftData 資料模型設計與實作
-- ✅ 使用者建立與管理
-- ✅ 占卜功能與答案系統
-- ✅ 歷史記錄顯示
-- ✅ TabView 底部導航
-- ✅ 錯誤處理機制
-- ✅ 首次啟動引導
-- ✅ 級聯刪除關聯
-- ✅ iOS 17.0 部署目標設定
+**Q: 為什麼需要建立帳號？**  
+A: 這只是為了保存你的占卜記錄，資料完全存在你的裝置上，不會上傳到任何地方。
 
-### 版本歷程
+**Q: 可以刪除占卜記錄嗎？**  
+A: 目前版本還沒有刪除功能，但我們正在開發中！
 
-詳細的開發階段報告請參閱 `magic_8_ball/md/Reports/` 目錄。
+**Q: 小工具不更新答案？**  
+A: 請確保你已經點擊了小工具上的八號球，它會自動更新顯示最新答案。
 
----
-
-## 🤝 貢獻指南
-
-### 分支策略
-
-- `main`：穩定版本分支
-- `SwiftData`：功能開發分支
-- 功能分支：`feature/功能名稱`
-
-### 提交規範
-
-```
-<類型>: <簡短描述>
-
-<詳細說明>
-
-範例：
-✅ 完成任務 7.3: 設定 iOS 17.0 Deployment Target
-重構: 實作 TabView 底部導航
-```
-
-### Pull Request 流程
-
-1. Fork 專案
-2. 建立功能分支
-3. 完成開發與測試
-4. 提交 Pull Request
-5. 等待 Code Review
+**Q: 支援哪些裝置？**  
+A: 目前支援 iPhone 和 iPad，需要 iOS 17.0 或更新版本。
 
 ---
 
-## 📄 授權
+## 🤝 關於這個專案
 
-本專案為 FCU Mobile 課程專案，僅供學習與教育用途。
+Magic 8 Ball 是逢甲大學行動應用程式開發課程的專案作品，由 **Team Magic 8 Ball** 開發。我們使用 Swift 和 SwiftUI 打造這款應用程式，希望為大家帶來有趣的占卜體驗。
 
----
+### 技術資訊
 
-## 👥 開發團隊
+- 使用 **SwiftUI** 打造精美介面
+- 使用 **SwiftData** 儲存占卜記錄
+- 支援 **iOS 小工具**，讓占卜更便利
+- 需要 **iOS 17.0** 或更新版本
 
-**Team Magic 8 Ball**
+### 開發團隊
 
-- 開發者：林政佑
-- 機構：逢甲大學 (FCU)
-- 課程：Mobile Application Development
-
----
-
-## 📞 聯絡資訊
-
-如有問題或建議，請透過以下方式聯繫：
-
-- GitHub Issues: [提交 Issue](https://github.com/FCU-Mobile/1141-Team_Magic_8_Ball/issues)
-- Pull Requests: [提交 PR](https://github.com/FCU-Mobile/1141-Team_Magic_8_Ball/pulls)
+- **開發者**：林政佑
+- **學校**：逢甲大學 (FCU)
+- **課程**：Mobile Application Development
 
 ---
 
-## 🔗 相關資源
+## 💬 回饋與建議
 
-- [SwiftUI Documentation](https://developer.apple.com/documentation/swiftui)
-- [SwiftData Documentation](https://developer.apple.com/documentation/swiftdata)
-- [Swift Programming Language](https://swift.org/documentation/)
+如果你有任何問題、建議或發現錯誤，歡迎告訴我們：
+
+- 📧 在 GitHub 上[提交 Issue](https://github.com/FCU-Mobile/1141-Team_Magic_8_Ball/issues)
+- 🔧 想貢獻程式碼？歡迎[提交 Pull Request](https://github.com/FCU-Mobile/1141-Team_Magic_8_Ball/pulls)
+
+---
+
+## 📚 相關資源
+
+想了解更多關於 App 開發的資訊：
+
+- [SwiftUI 官方文件](https://developer.apple.com/documentation/swiftui)
+- [SwiftData 官方文件](https://developer.apple.com/documentation/swiftdata)
+- [Swift 程式語言](https://swift.org/documentation/)
 
 ---
 
