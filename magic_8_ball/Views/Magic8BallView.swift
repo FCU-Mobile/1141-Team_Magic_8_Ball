@@ -25,34 +25,34 @@ struct Magic8BallView: View {
     @Query private var users: [User]
     @Environment(\.modelContext) private var modelContext
     @Environment(\.currentUser) private var currentUser
-    
+
     @State private var question = ""
     @State private var currentAnswer: (AnswerType, String, String) = (.neutral, "", "")
     @State private var showAnswer = false
     @State private var showUserCreation = false
-    
+
     // 錯誤處理
     @State private var showError = false
     @State private var errorMessage = ""
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 30) {
-                Text("問一個問題，點擊按鈕獲得答案")
+                Text(personalizedGreeting)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text("你的問題：")
                         .font(.headline)
                         .foregroundColor(.primary)
-                    
+
                     TextField("在這裡輸入你的問題...", text: $question)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .font(.body)
                 }
                 .padding(.horizontal)
-                
+
                 // 八號球
                 ZStack {
                     Circle()
@@ -65,7 +65,7 @@ struct Magic8BallView: View {
                         )
                         .frame(width: 200, height: 200)
                         .shadow(radius: 10)
-                    
+
                     if showAnswer {
                         Text("\(currentAnswer.1)\n\(currentAnswer.2)")
                             .font(.system(size: 18, weight: .bold))
@@ -87,7 +87,7 @@ struct Magic8BallView: View {
                             .foregroundColor(.white)
                     }
                 }
-                
+
                 // Ask button
                 Button(action: getAnswer) {
                     HStack {
@@ -111,7 +111,7 @@ struct Magic8BallView: View {
                 }
                 .disabled(question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .opacity(question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.6 : 1.0)
-                
+
                 if showAnswer {
                     Button("再問一次") {
                         resetAnswer()
@@ -120,7 +120,7 @@ struct Magic8BallView: View {
                     .foregroundColor(.blue)
                     .padding(.top, 10)
                 }
-                
+
                 Spacer()
             }
             .padding()
@@ -141,11 +141,11 @@ struct Magic8BallView: View {
                 if users.isEmpty {
                     showUserCreation = true
                 }
-                
+
                 // 測試用詳細日誌
                 print("=== SwiftData 狀態檢查 ===")
                 print("📊 用戶數量: \(users.count)")
-                
+
                 if let user = users.first {
                     print("👤 用戶資訊:")
                     print("   - ID: \(user.id)")
@@ -167,26 +167,37 @@ struct Magic8BallView: View {
             }
         }
     }
-    
+
+    // MARK: - Computed Properties
+
+    /// 個人化問候語
+    private var personalizedGreeting: String {
+        if let user = users.first {
+            return "\(user.name)，問一個問題，點擊按鈕獲得答案"
+        } else {
+            return "問一個問題，點擊按鈕獲得答案"
+        }
+    }
+
     // MARK: - 功能函數
-    
+
     private func getAnswer() {
         withAnimation(.easeOut(duration: 0.5)) {
             showAnswer = false
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             currentAnswer = AnswerType.allAnswers.randomElement() ?? (.neutral, "請再試一次", "Please try again")
-            
+
             // 儲存到 SwiftData
             saveAnswer(question: question, answer: currentAnswer.1, answerType: currentAnswer.0)
-            
+
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 showAnswer = true
             }
         }
     }
-    
+
     /// 儲存答案到 SwiftData
     private func saveAnswer(question: String, answer: String, answerType: AnswerType) {
         // 直接使用查詢到的第一個用戶
@@ -196,7 +207,7 @@ struct Magic8BallView: View {
             showError = true
             return
         }
-        
+
         do {
             let record = AnswerRecord(
                 question: question,
@@ -213,7 +224,7 @@ struct Magic8BallView: View {
             showError = true
         }
     }
-    
+
     private func resetAnswer() {
         withAnimation(.easeInOut(duration: 0.3)) {
             showAnswer = false
@@ -227,11 +238,11 @@ struct Magic8BallView: View {
 struct EquilateralTriangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         // 半徑
         let radius = min(rect.width, rect.height) / 2
         let center = CGPoint(x: rect.midX, y: rect.midY)
-        
+
         // 計算三個頂點
         let angle = Double.pi * 2 / 3  // 120度 (等邊三角形)
         let points: [CGPoint] = (0..<3).map { i in
@@ -241,13 +252,13 @@ struct EquilateralTriangle: Shape {
                 y: center.y + CGFloat(sin(theta)) * radius
             )
         }
-        
+
         // 畫三角形
         path.move(to: points[0])
         path.addLine(to: points[1])
         path.addLine(to: points[2])
         path.addLine(to: points[0])
-        
+
         return path
     }
 }
