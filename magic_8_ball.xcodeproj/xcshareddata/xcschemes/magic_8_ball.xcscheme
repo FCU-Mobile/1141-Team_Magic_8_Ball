@@ -74,6 +74,14 @@
             ReferencedContainer = "container:magic_8_ball.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <!-- Developers: Set your own GEMINI_API_KEY locally. Do not commit real API keys to version control. -->
+         <EnvironmentVariable
+            key = "GEMINI_API_KEY"
+            value = ""
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
