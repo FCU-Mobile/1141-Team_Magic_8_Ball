@@ -27,13 +27,16 @@ struct Magic8BallView: View {
     @Environment(\.currentUser) private var currentUser
 
     @State private var question = ""
-    @State private var currentAnswer: (AnswerType, String, String) = (.neutral, "", "")
+    @State private var enhancedAnswer: EnhancedAnswer?
     @State private var showAnswer = false
     @State private var showUserCreation = false
 
     // 錯誤處理
     @State private var showError = false
     @State private var errorMessage = ""
+
+    // Gemini API 服務
+    @StateObject private var geminiService = GeminiAPIService.shared
 
     var body: some View {
         NavigationStack {
@@ -66,17 +69,17 @@ struct Magic8BallView: View {
                         .frame(width: 200, height: 200)
                         .shadow(radius: 10)
 
-                    if showAnswer {
-                        Text("\(currentAnswer.1)\n\(currentAnswer.2)")
-                            .font(.system(size: 18, weight: .bold))
-                            .shadow(radius: 5)
+                    if showAnswer, let answer = enhancedAnswer {
+                        // 只顯示原始答案
+                        Text(answer.originalAnswer.1)
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding(20)
                             .background(
                                 EquilateralTriangle()
                                     .stroke(Color.blue, lineWidth: 3)
-                                    .fill(currentAnswer.0.color.opacity(0.1))
+                                    .fill(answer.originalAnswer.0.color.opacity(0.1))
                                     .frame(width: 180, height: 180)
                                     .rotationEffect(.degrees(180))
                             )
@@ -119,6 +122,65 @@ struct Magic8BallView: View {
                     .font(.subheadline)
                     .foregroundColor(.blue)
                     .padding(.top, 10)
+
+                    // Gemini AI 生成內容區域
+                    if let answer = enhancedAnswer {
+                        VStack(spacing: 10) {
+                            // AI 生成內容或載入狀態
+                            if answer.isLoading {
+                                VStack(spacing: 8) {
+                                    Text("✨ AI 占卜師正在解讀...")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+
+                                    HStack(spacing: 4) {
+                                        ForEach(0..<3) { index in
+                                            Circle()
+                                                .fill(Color.blue.opacity(0.7))
+                                                .frame(width: 8, height: 8)
+                                                .scaleEffect(answer.isLoading ? 1.0 : 0.5)
+                                                .animation(
+                                                    Animation.easeInOut(duration: 0.6)
+                                                        .repeatForever()
+                                                        .delay(Double(index) * 0.2),
+                                                    value: answer.isLoading
+                                                )
+                                        }
+                                    }
+                                }
+                            } else if let aiContent = answer.aiGeneratedContent {
+                                VStack(spacing: 8) {
+                                    Text("🔮 AI 占卜師的解讀")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+
+                                    Text(aiContent)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.primary)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color(uiColor: .secondarySystemBackground))
+                                                .stroke(answer.originalAnswer.0.color.opacity(0.3), lineWidth: 1)
+                                        )
+                                }
+                            } else if answer.error != nil {
+                                VStack(spacing: 8) {
+                                    Text("✨ 神秘的力量暫時不穩定")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+
+                                    Text("傳統占卜答案依然有效 🎱")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary.opacity(0.8))
+                                }
+                            }
+                        }
+                        .padding(.top, 20)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
                 }
 
                 Spacer()
@@ -139,7 +201,7 @@ struct Magic8BallView: View {
             .onAppear {
                 // 檢查是否需要顯示用戶建立畫面
                 if users.isEmpty {
-                    showUserCreation = true
+                    createDefaultUser()
                 }
 
                 // 測試用詳細日誌
@@ -187,14 +249,62 @@ struct Magic8BallView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            currentAnswer = AnswerType.allAnswers.randomElement() ?? (.neutral, "請再試一次", "Please try again")
+            // 獲取原始答案
+            let originalAnswer = AnswerType.allAnswers.randomElement() ?? (.neutral, "請再試一次", "Please try again")
 
-            // 儲存到 SwiftData
-            saveAnswer(question: question, answer: currentAnswer.1, answerType: currentAnswer.0)
+            // 設定載入狀態
+            enhancedAnswer = EnhancedAnswer.loading(originalAnswer)
 
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 showAnswer = true
             }
+
+            // 儲存原始答案到 SwiftData
+            saveAnswer(question: question, answer: originalAnswer.1, answerType: originalAnswer.0)
+
+            // 嘗試獲取 AI 增強內容
+            generateEnhancedAnswer(originalAnswer: originalAnswer)
+        }
+    }
+
+    /// 生成 AI 增強答案
+    private func generateEnhancedAnswer(originalAnswer: (AnswerType, String, String)) {
+        Task {
+            do {
+                let userName = users.first?.name
+                let aiContent = try await geminiService.generatePersonalizedAnswer(
+                    question: question,
+                    originalAnswer: originalAnswer,
+                    userName: userName
+                )
+
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        enhancedAnswer = EnhancedAnswer.completed(originalAnswer, aiContent: aiContent)
+                    }
+                }
+
+            } catch {
+                print("AI 生成失敗: \(error.localizedDescription)")
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        enhancedAnswer = EnhancedAnswer.failed(originalAnswer, error: error)
+                    }
+                }
+            }
+        }
+    }
+
+    /// 創建預設用戶
+    private func createDefaultUser() {
+        let defaultUser = User(name: "神秘占卜師")
+        modelContext.insert(defaultUser)
+
+        do {
+            try modelContext.save()
+            print("✅ 已創建預設用戶")
+        } catch {
+            print("❌ 創建預設用戶失敗: \(error.localizedDescription)")
         }
     }
 
@@ -228,6 +338,7 @@ struct Magic8BallView: View {
     private func resetAnswer() {
         withAnimation(.easeInOut(duration: 0.3)) {
             showAnswer = false
+            enhancedAnswer = nil
         }
         question = ""
     }
