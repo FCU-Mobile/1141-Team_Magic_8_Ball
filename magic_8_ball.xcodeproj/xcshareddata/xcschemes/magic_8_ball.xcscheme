@@ -75,9 +75,10 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
+         <!-- Developers: Set your own GEMINI_API_KEY locally. Do not commit real API keys to version control. -->
          <EnvironmentVariable
             key = "GEMINI_API_KEY"
-            value = "AIzaSyDvrj8WuaHElp5euf9G7VjyZ_8f5ENwmPo"
+            value = ""
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
