@@ -21,30 +21,31 @@ enum AnswerType: String, Codable {
     
     /// 所有預設的占卜答案（中英文對照）
     static let allAnswers: [(AnswerType, String, String)] = [
-        // 肯定類型
-        (.positive, "這是必然", "It is certain"),
-        (.positive, "肯定是的", "It is decidedly so"),
-        (.positive, "不用懷疑", "Without a doubt"),
-        (.positive, "毫無疑問", "Yes, definitely"),
-        (.positive, "你能依靠它", "You may rely on it"),
-        (.positive, "如我所見，是的", "As I see it, yes"),
-        (.positive, "很有可能", "Most likely"),
-        (.positive, "前景很好", "Outlook good"),
-        (.positive, "是的", "Yes"),
-        (.positive, "種種跡象指出「是的」", "Signs point to yes"),
+        // 肯定類型 💚
+        (.positive, "穩了啦", "It is certain"),
+        (.positive, "這必須贏", "It is decidedly so"),
+        (.positive, "可以，這很可以", "Without a doubt"),
+        (.positive, "鐵定沒問題", "Yes, definitely"),
+        (.positive, "相信我的直覺", "You may rely on it"),
+        (.positive, "依我看就是衝", "As I see it, yes"),
+        (.positive, "八九不離十", "Most likely"),
+        (.positive, "前途一片光明", "Outlook good"),
+        (.positive, "就是這樣", "Yes"),
+        (.positive, "宇宙都在幫你", "Signs point to yes"),
         
-        // 中性類型
-        (.neutral, "回覆籠統，再試試", "Reply hazy try again"),
-        (.neutral, "待會再問", "Ask again later"),
-        (.neutral, "最好現在不告訴你", "Better not tell you now"),
-        (.neutral, "現在無法預測", "Cannot predict now"),
-        (.neutral, "專心再問一遍", "Concentrate and ask again"),
+        // 中性類型 💙
+        (.neutral, "訊號不穩，再問一次", "Reply hazy try again"),
+        (.neutral, "等等再說吧", "Ask again later"),
+        (.neutral, "現在說了你會後悔", "Better not tell you now"),
+        (.neutral, "算命仙也不知道", "Cannot predict now"),
+        (.neutral, "誠心發問才會靈", "Concentrate and ask again"),
         
-        // 否定類型
-        (.negative, "想的美", "Don't count on it"),
-        (.negative, "我的回覆是「不」", "My reply is no"),
-        (.negative, "我的來源說「不」", "My sources say no"),
-        (.negative, "前景不太好", "Outlook not so good"),
-        (.negative, "很可疑", "Very doubtful")
+        // 否定類型 ❤️
+        (.negative, "別做夢了", "Don't count on it"),
+        (.negative, "不行就是不行", "My reply is no"),
+        (.negative, "內線消息說 NG", "My sources say no"),
+        (.negative, "我勸你最好不要", "Outlook not so good"),
+        (.negative, "這很有事", "Very doubtful")
     ]
+
 }
