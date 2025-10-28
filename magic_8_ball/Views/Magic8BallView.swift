@@ -38,12 +38,12 @@ struct Magic8BallView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 30) {
-                Text(personalizedGreeting)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+//                Text(personalizedGreeting)
+//                    .font(.subheadline)
+//                    .foregroundColor(.secondary)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("你的問題：")
+                    Text(personalizedGreeting)
                         .font(.headline)
                         .foregroundColor(.primary)
 
